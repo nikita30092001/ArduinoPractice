@@ -1,16 +1,20 @@
 #include <EEPROM.h>
+#include <RTClib.h>
 
 #define LED 9
 #define LATENCY 1000
 #define BLINK_TIME 10
-#define WRITE_TIME 5000
+#define WRITE_TIME 5
 #define COUNTER 10
 #define ANALOG_MAX 1023
+
+RTC_DS3231 rtc;
 
 void setup() {
   pinmode(LED, output);
   Serial.begin(9600);
   while(!Serial) {}
+  rtc.begin();
 }
 
 void loop() {
@@ -52,10 +56,10 @@ void send_to_uart()
 
 void write_in_eeprom()
 {
-  static unsigned long last_time = millis();
+  static uint8_t last_time = rtc.now().second();
   static int i = 0;
 
-  unsigned long current_time = millis();
+  unsigned uint8_t current_time = rtc.now().second();
   if current_time - last_time >= WRITE_TIME 
   {
     if i < COUNTER
